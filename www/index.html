@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Staff List</h1>
+        <ul id="staffList" class="list-group mt-3"></ul>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            
+            $.ajax({
+                url: 'https://kerbau.odaje.biz/getstaff.php',
+                method: 'GET',
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    var staffList = $('#staffList');
+                    data.forEach(function(staff) {
+                        var staffData = JSON.parse(staff);
+                        if (staffData.status === 1) {
+                            return; // Skip status entry
+                        }
+                        var listItem = $('<li class="list-group-item"></li>')
+                            .text(staffData.email)
+                            .attr('id', staffData.employeeNumber)
+                            .on('click', function() {
+                                window.location.href = 'secondpage.html?id=' + staffData.employeeNumber;
+                            });
+                        staffList.append(listItem);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

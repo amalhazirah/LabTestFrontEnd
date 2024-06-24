@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Staff Details</h1>
+        <div id="staffDetails" class="mt-3"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            console.log("Document ready");
+            var urlParams = new URLSearchParams(window.location.search);
+            var employeeNumber = urlParams.get('id');
+            console.log("Employee Number:", employeeNumber);
+
+            if (employeeNumber) {
+                $.ajax({
+                    url: 'https://kerbau.odaje.biz/getstaffbyid.php',
+                    method: 'GET',
+                    data: { id: employeeNumber },
+                    success: function(response) {
+                        console.log("AJAX success");
+                        var data = JSON.parse(response);
+                        if (data[0].status === 1) {
+                            var staffData = JSON.parse(data[1]);
+                            var staffDetails = $('#staffDetails');
+                            staffDetails.append('<p><strong>Employee Number:</strong> ' + staffData.employeeNumber + '</p>');
+                            staffDetails.append('<p><strong>Name:</strong> ' + staffData.firstName + ' ' + staffData.lastName + '</p>');
+                            staffDetails.append('<p><strong>Email:</strong> ' + staffData.email + '</p>');
+                            staffDetails.append('<p><strong>Extension:</strong> ' + staffData.extension + '</p>');
+                            staffDetails.append('<p><strong>Office Code:</strong> ' + staffData.officeCode + '</p>');
+                            staffDetails.append('<p><strong>Reports To:</strong> ' + (staffData.reportsTo || 'N/A') + '</p>');
+                            staffDetails.append('<p><strong>Job Title:</strong> ' + staffData.jobTitle + '</p>');
+                        } else {
+                            $('#staffDetails').text('No details available for this employee.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error", status, error);
+                        alert('Error retrieving staff details');
+                    }
+                });
+            } else {
+                $('#staffDetails').text('No employee ID provided.');
+            }
+        });
+    </script>
+</body>
+</html>
